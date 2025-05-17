@@ -1,0 +1,38 @@
+app:
+  name: user-service
+  mode: production
+
+server:
+  host: 0.0.0.0
+  port: 8080
+  read_timeout: 15s
+  write_timeout: 15s
+  idle_timeout: 60s
+  shutdown_timeout: 10s
+
+database:               # will be overridden by env
+  driver: postgres
+  host: ""              # left blank on purpose
+  port: 0
+  name: ""
+  user: ""
+  password: ""
+  sslmode: "disable"
+  timezone: "Asia/Kolkata"
+  max_open_conns: 50
+  max_idle_conns: 10
+  conn_max_idle_time: 30m
+  conn_max_lifetime: 30m
+
+logger:
+  level: debug
+  encoding: json
+  log_dir: logs
+  output_paths: [stdout]
+  error_output_paths: [stderr]
+  sampling: {initial: 100, thereafter: 100}
+
+jwt:
+  issuer: edgeflowtech.com
+  access_ttl: 15m
+  refresh_ttl: 720h

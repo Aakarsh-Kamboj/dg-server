@@ -1,0 +1,2 @@
+2025-05-17T09:48:04.787+0530	[34mINFO[0m	infrastructure/logger.go:46	Logger initialized	{"environment": "DEV"}
+2025-05-17T09:52:21.175+0530	[34mINFO[0m	infrastructure/logger.go:47	Logger initialized	{"environment": "DEV"}
