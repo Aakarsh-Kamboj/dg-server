@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func RegisterRoutes(e *echo.Echo, onboardingHandler *v1.OnboardingHandler, controlHandler *v1.ControlHandler, evidenceTaskHandler *v1.EvidenceTaskHandler, frameworkHandler *v1.FrameworkHandler) {
+func RegisterRoutes(e *echo.Echo, onboardingHandler *v1.OnboardingHandler, controlHandler *v1.ControlHandler, evidenceTaskHandler *v1.EvidenceTaskHandler, frameworkHandler *v1.FrameworkHandler, departmentHandler *v1.DepartmentHandler) {
 	for _, version := range config.APIVersions {
 		apiPrefix := fmt.Sprintf("/api/%s", version)
 		vGroup := e.Group(apiPrefix, middleware.DeprecationMiddleware()) // ✅ Adds versioning
@@ -35,6 +35,7 @@ func RegisterRoutes(e *echo.Echo, onboardingHandler *v1.OnboardingHandler, contr
 			vGroup.PUT("/evidence-tasks/:id", evidenceTaskHandler.UpdateEvidenceTask)
 			vGroup.DELETE("/evidence-tasks/:id", evidenceTaskHandler.DeleteEvidenceTask)
 			vGroup.GET("/evidence-summary", evidenceTaskHandler.GetStatusSummary)
+			vGroup.POST("/upload-evidence", v1.UploadEvidence)
 
 			// framework endpoints
 			vGroup.POST("/frameworks", frameworkHandler.CreateFramework)
@@ -44,6 +45,12 @@ func RegisterRoutes(e *echo.Echo, onboardingHandler *v1.OnboardingHandler, contr
 			vGroup.PUT("/frameworks/:id", frameworkHandler.UpdateFramework)
 			vGroup.DELETE("/frameworks/:id", frameworkHandler.DeleteFramework)
 			vGroup.GET("/frameworks/:id/compliance", frameworkHandler.GetCompliancePercentage)
+			vGroup.POST("/frameworks/:framework_id/controls/:control_id", frameworkHandler.AddControlToFramework)
+			vGroup.DELETE("/frameworks/:framework_id/controls/:control_id", frameworkHandler.RemoveControlFromFramework)
+			vGroup.GET("/frameworks/:id/evidence-percentage", frameworkHandler.GetEvidenceTaskPercentage)
+
+			// department
+			vGroup.POST("/departments", departmentHandler.CreateDepartment)
 
 			vGroup.POST("/register", onboardingHandler.OrgRegistration)
 		}

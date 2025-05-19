@@ -4,8 +4,8 @@ type ControlStatus string
 
 const (
 	StatusCompliant     ControlStatus = "Compliant"
-	StatusNonCompliant  ControlStatus = "NonCompliant"
-	StatusNotApplicable ControlStatus = "NotApplicable"
+	StatusNonCompliant  ControlStatus = "Non Compliant"
+	StatusNotApplicable ControlStatus = "Not Applicable"
 )
 
 func IsValidStatus(s ControlStatus) bool {

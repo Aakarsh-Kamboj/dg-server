@@ -1,6 +1,10 @@
 package domain
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Framework struct {
 	ID                     uuid.UUID    `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
@@ -11,4 +15,8 @@ type Framework struct {
 	IsCustom               bool         `json:"is_custom"`
 	OrganizationID         uuid.UUID    `gorm:"type:uuid;not null;index" json:"organization_id"`
 	Organization           Organization `gorm:"foreignKey:OrganizationID;references:ID;constraint:OnDelete:CASCADE" json:"-"`
+	Controls               []Control    `gorm:"many2many:framework_controls;" json:"controls"` // ✅ added for many-to-many
+	EvidenceTaskPercentage float64      `gorm:"-" json:"evidence_task_percentage"`             // <- calculated at runtime
+	CreatedAt              time.Time    `gorm:"autoCreateTime" json:"created_at"`              // added timestamps
+	UpdatedAt              time.Time    `gorm:"autoUpdateTime" json:"updated_at"`
 }

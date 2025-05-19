@@ -29,6 +29,7 @@ type Server struct {
 	controlHandler      *v1.ControlHandler
 	evidenceTaskHandler *v1.EvidenceTaskHandler
 	frameworkHandler    *v1.FrameworkHandler
+	departmentHandler   *v1.DepartmentHandler
 	// usecase *usecase.Usecase
 }
 
@@ -58,9 +59,9 @@ func NewEcho(logger *zap.Logger) *echo.Echo {
 
 // NewServer initializes a new server instance.
 // NewServer is a provider for *Server.
-func NewServer(e *echo.Echo, cfg *config.Config, logger *zap.Logger, onboardingHandler *v1.OnboardingHandler, controlHandler *v1.ControlHandler, evidenceTaskHandler *v1.EvidenceTaskHandler, frameworkHandler *v1.FrameworkHandler) *Server {
-	server := &Server{e: e, cfg: cfg, logger: logger, onboardingHandler: onboardingHandler, controlHandler: controlHandler, evidenceTaskHandler: evidenceTaskHandler, frameworkHandler: frameworkHandler}
-	transportHttp.RegisterRoutes(server.e, onboardingHandler, controlHandler, evidenceTaskHandler, frameworkHandler)
+func NewServer(e *echo.Echo, cfg *config.Config, logger *zap.Logger, onboardingHandler *v1.OnboardingHandler, controlHandler *v1.ControlHandler, evidenceTaskHandler *v1.EvidenceTaskHandler, frameworkHandler *v1.FrameworkHandler, departmentHandler *v1.DepartmentHandler) *Server {
+	server := &Server{e: e, cfg: cfg, logger: logger, onboardingHandler: onboardingHandler, controlHandler: controlHandler, evidenceTaskHandler: evidenceTaskHandler, frameworkHandler: frameworkHandler, departmentHandler: departmentHandler}
+	transportHttp.RegisterRoutes(server.e, onboardingHandler, controlHandler, evidenceTaskHandler, frameworkHandler, departmentHandler)
 	return server
 }
 

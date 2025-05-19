@@ -122,3 +122,60 @@ func (h *FrameworkHandler) GetCompliancePercentage(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, echo.Map{"compliance_percentage": percentage})
 }
+
+func (h *FrameworkHandler) AddControlToFramework(c echo.Context) error {
+	frameworkIDStr := c.Param("framework_id")
+	controlIDStr := c.Param("control_id")
+
+	frameworkID, err := uuid.Parse(frameworkIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid framework UUID"})
+	}
+
+	controlID, err := uuid.Parse(controlIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid control UUID"})
+	}
+
+	if err := h.uc.AddControlToFramework(c.Request().Context(), frameworkID, controlID); err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusNoContent, nil)
+}
+
+func (h *FrameworkHandler) RemoveControlFromFramework(c echo.Context) error {
+	frameworkIDStr := c.Param("framework_id")
+	controlIDStr := c.Param("control_id")
+
+	frameworkID, err := uuid.Parse(frameworkIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid framework UUID"})
+	}
+
+	controlID, err := uuid.Parse(controlIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid control UUID"})
+	}
+
+	if err := h.uc.RemoveControlFromFramework(c.Request().Context(), frameworkID, controlID); err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusNoContent, nil)
+}
+
+func (h *FrameworkHandler) GetEvidenceTaskPercentage(c echo.Context) error {
+	idStr := c.Param("id")
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid UUID"})
+	}
+
+	percentage, err := h.uc.GetEvidenceTaskPercentage(c.Request().Context(), id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"evidence_task_percentage": percentage})
+}

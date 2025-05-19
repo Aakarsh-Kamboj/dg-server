@@ -14,6 +14,7 @@ type EvidenceTaskRepository interface {
 	FindAll(ctx context.Context) ([]domain.EvidenceTask, error)
 	Update(ctx context.Context, task *domain.EvidenceTask) error
 	Delete(ctx context.Context, id uuid.UUID) error
+	GetEvidenceStatsByFramework(ctx context.Context, frameworkID uuid.UUID) (total int64, uploaded int64, err error)
 }
 
 type evidenceTaskRepository struct {
@@ -46,4 +47,20 @@ func (r *evidenceTaskRepository) Update(ctx context.Context, task *domain.Eviden
 
 func (r *evidenceTaskRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	return r.db.WithContext(ctx).Delete(&domain.EvidenceTask{}, "id = ?", id).Error
+}
+
+func (r *evidenceTaskRepository) GetEvidenceStatsByFramework(ctx context.Context, frameworkID uuid.UUID) (total int64, uploaded int64, err error) {
+	err = r.db.WithContext(ctx).
+		Model(&domain.EvidenceTask{}).
+		Where("framework_id = ?", frameworkID).
+		Count(&total).Error
+	if err != nil {
+		return
+	}
+
+	err = r.db.WithContext(ctx).
+		Model(&domain.EvidenceTask{}).
+		Where("framework_id = ? AND status = ?", frameworkID, domain.StatusUploaded).
+		Count(&uploaded).Error
+	return
 }

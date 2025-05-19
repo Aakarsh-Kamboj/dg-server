@@ -46,6 +46,7 @@ func InitializeServer() (*Server, error) {
 		repository.NewControlRepository,
 		repository.NewEvidenceTaskRepository,
 		repository.NewFrameworkRepository,
+		repository.NewDepartmentRepository,
 		ProvideUnitOfWorkFactory,
 
 		// use-case:
@@ -53,12 +54,14 @@ func InitializeServer() (*Server, error) {
 		usecase.NewControlUseCase,
 		usecase.NewEvidenceTaskUseCase,
 		usecase.NewFrameworkUseCase,
+		usecase.NewDepartmentUseCase,
 
 		// handler:
 		v1.NewOnboardingHandler,
 		v1.NewControlHandler,
 		v1.NewEvidenceTaskHandler,
 		v1.NewFrameworkHandler,
+		v1.NewDepartmentHandler,
 
 		// framework:
 		NewEcho,

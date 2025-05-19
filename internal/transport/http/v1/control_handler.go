@@ -23,8 +23,9 @@ func (h *ControlHandler) CreateControl(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid request"})
 	}
 
-	if err := c.Validate(control); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	// Validate status (should be Compliant, NonCompliant, or NotApplicable)
+	if !domain.IsValidStatus(control.Status) {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid status: must be Compliant, NonCompliant, or NotApplicable"})
 	}
 
 	if err := h.uc.CreateControl(c.Request().Context(), &control); err != nil {

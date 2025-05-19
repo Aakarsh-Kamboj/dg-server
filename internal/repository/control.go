@@ -12,10 +12,12 @@ type ControlRepository interface {
 	Create(ctx context.Context, c *domain.Control) error
 	FindByID(ctx context.Context, id uuid.UUID) (*domain.Control, error)
 	FindByCode(ctx context.Context, code string) (*domain.Control, error)
-	FindByFrameworkID(ctx context.Context, frameworkID uuid.UUID) ([]domain.Control, error)
 	FindAll(ctx context.Context) ([]domain.Control, error)
 	Update(ctx context.Context, c *domain.Control) error
 	Delete(ctx context.Context, id uuid.UUID) error
+	AddControlsToFramework(ctx context.Context, frameworkID uuid.UUID, controls []domain.Control) error
+	RemoveControlsFromFramework(ctx context.Context, frameworkID uuid.UUID, controls []domain.Control) error
+	ClearControlsFromFramework(ctx context.Context, frameworkID uuid.UUID) error
 }
 
 type controlRepository struct {
@@ -46,14 +48,6 @@ func (r *controlRepository) FindByCode(ctx context.Context, code string) (*domai
 	return &control, nil
 }
 
-func (r *controlRepository) FindByFrameworkID(ctx context.Context, frameworkID uuid.UUID) ([]domain.Control, error) {
-	var controls []domain.Control
-	if err := r.db.WithContext(ctx).Where("framework_id = ?", frameworkID).Find(&controls).Error; err != nil {
-		return nil, err
-	}
-	return controls, nil
-}
-
 func (r *controlRepository) FindAll(ctx context.Context) ([]domain.Control, error) {
 	var controls []domain.Control
 	if err := r.db.WithContext(ctx).Find(&controls).Error; err != nil {
@@ -72,4 +66,28 @@ func (r *controlRepository) Update(ctx context.Context, c *domain.Control) error
 
 func (r *controlRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	return r.db.WithContext(ctx).Delete(&domain.Control{}, "id = ?", id).Error
+}
+
+func (r *controlRepository) AddControlsToFramework(ctx context.Context, frameworkID uuid.UUID, controls []domain.Control) error {
+	var framework domain.Framework
+	if err := r.db.WithContext(ctx).First(&framework, "id = ?", frameworkID).Error; err != nil {
+		return err
+	}
+	return r.db.WithContext(ctx).Model(&framework).Association("Controls").Append(controls)
+}
+
+func (r *controlRepository) RemoveControlsFromFramework(ctx context.Context, frameworkID uuid.UUID, controls []domain.Control) error {
+	var framework domain.Framework
+	if err := r.db.WithContext(ctx).First(&framework, "id = ?", frameworkID).Error; err != nil {
+		return err
+	}
+	return r.db.WithContext(ctx).Model(&framework).Association("Controls").Delete(controls)
+}
+
+func (r *controlRepository) ClearControlsFromFramework(ctx context.Context, frameworkID uuid.UUID) error {
+	var framework domain.Framework
+	if err := r.db.WithContext(ctx).First(&framework, "id = ?", frameworkID).Error; err != nil {
+		return err
+	}
+	return r.db.WithContext(ctx).Model(&framework).Association("Controls").Clear()
 }

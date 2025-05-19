@@ -38,9 +38,12 @@ func InitializeServer() (*Server, error) {
 	evidenceTaskUseCase := usecase.NewEvidenceTaskUseCase(evidenceTaskRepository)
 	evidenceTaskHandler := v1.NewEvidenceTaskHandler(evidenceTaskUseCase)
 	frameworkRepository := repository.NewFrameworkRepository(db)
-	frameworkUseCase := usecase.NewFrameworkUseCase(frameworkRepository, controlRepository)
+	frameworkUseCase := usecase.NewFrameworkUseCase(frameworkRepository, controlRepository, evidenceTaskRepository)
 	frameworkHandler := v1.NewFrameworkHandler(frameworkUseCase)
-	server := NewServer(echo, configConfig, logger, onboardingHandler, controlHandler, evidenceTaskHandler, frameworkHandler)
+	departmentRepository := repository.NewDepartmentRepository(db)
+	departmentUseCase := usecase.NewDepartmentUseCase(departmentRepository)
+	departmentHandler := v1.NewDepartmentHandler(departmentUseCase)
+	server := NewServer(echo, configConfig, logger, onboardingHandler, controlHandler, evidenceTaskHandler, frameworkHandler, departmentHandler)
 	return server, nil
 }
 

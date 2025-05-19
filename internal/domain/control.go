@@ -15,8 +15,7 @@ type Control struct {
 	Assignee        string        `gorm:"size:255" json:"assignee"`
 	Description     string        `gorm:"type:text" json:"description,omitempty"`
 	ControlQuestion string        `gorm:"type:text" json:"control_question,omitempty"`
-	FrameworkID     uuid.UUID     `gorm:"type:uuid;not null;index" json:"framework_id"`
-	Framework       *Framework    `gorm:"foreignKey:FrameworkID;references:ID;constraint:OnDelete:CASCADE" json:"-"`
+	Frameworks      []Framework   `gorm:"many2many:framework_controls;" json:"frameworks"`                              // ✅ added for many-to-many
 	OrganizationID  uuid.UUID     `gorm:"type:uuid;not null;index" json:"organization_id"`                              // changed from string to uuid.UUID
 	Organization    Organization  `gorm:"foreignKey:OrganizationID;references:ID;constraint:OnDelete:CASCADE" json:"-"` // added constraint
 	CreatedAt       time.Time     `gorm:"autoCreateTime" json:"created_at"`                                             // added timestamps
